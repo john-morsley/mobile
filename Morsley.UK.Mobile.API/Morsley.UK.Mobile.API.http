@@ -1,0 +1,6 @@
+@Morsley.UK.Mobile.API_HostAddress = http://localhost:5074
+
+GET {{Morsley.UK.Mobile.API_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
