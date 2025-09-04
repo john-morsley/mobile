@@ -29,7 +29,7 @@ steps:
   inputs:
     buildType: 'specific'
     project: 'mobile'
-    definition: 'john-morsley.mobile-ci'
+    definition: 'ci'
     buildVersionToDownload: 'latest'
     artifactName: 'drop'
     targetPath: '$(Pipeline.Workspace)/artifacts'
