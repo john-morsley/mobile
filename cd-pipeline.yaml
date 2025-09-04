@@ -5,7 +5,7 @@ trigger: none
 resources:
   pipelines:
   - pipeline: dependant-cd-pipeline
-    source: john-morsley.mobile-ci
+    source: ci
     project: mobile
     branch: main
     trigger:
