@@ -5,8 +5,8 @@ trigger: none
 resources:
   pipelines:
   - pipeline: dependant-cd-pipeline
-    source: john-morsley.azure-pipelines-poc-ci
-    project: azure-pipeline-poc
+    source: john-morsley.mobile-ci
+    project: mobile
     branch: main
     trigger:
      branches:
@@ -17,8 +17,8 @@ pool:
   vmImage: ubuntu-latest
 
 variables:
-  azureSubscription: 'morsley-uk-test'
-  appName: 'morsley-uk-test-api'
+  azureSubscription: 'morsley-uk-mobile'
+  appName: 'morsley-uk-mobile-api'
   artifactName: 'drop'
   packagePath: 'Morsley.UK.Mobile.API.zip'
 
@@ -28,8 +28,8 @@ steps:
   displayName: "--> Download CI Pipeline Artifacts <--"
   inputs:
     buildType: 'specific'
-    project: 'azure-pipeline-poc'
-    definition: 'john-morsley.azure-pipelines-poc-ci'
+    project: 'mobile'
+    definition: 'john-morsley.mobile-ci'
     buildVersionToDownload: 'latest'
     artifactName: 'drop'
     targetPath: '$(Pipeline.Workspace)/artifacts'
@@ -61,7 +61,7 @@ steps:
         exit 1
       fi
 
-# Deploy our test API to production...  
+# Deploy our mobile API to production...  
 - task: AzureWebApp@1
   displayName: '--> Deploy to Production <--'
   inputs: 
