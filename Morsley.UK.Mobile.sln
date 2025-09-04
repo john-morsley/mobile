@@ -5,22 +5,30 @@ VisualStudioVersion = 17.14.36414.22
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{8EC462FD-D22E-90A8-E5CE-7E832BA40C5D}"
 	ProjectSection(SolutionItems) = preProject
+		.gitignore = .gitignore
+		cobertura.settings.xml = cobertura.settings.xml
 		docker-compose.yaml = docker-compose.yaml
 		LICENSE = LICENSE
 		README.md = README.md
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Morsley.UK.Mobile", "Morsley.UK.Mobile\Morsley.UK.Mobile.csproj", "{D9508508-CBBA-966F-D64D-78C18EE816B3}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Morsley.UK.Mobile.Console", "Morsley.UK.Mobile.Console\Morsley.UK.Mobile.Console.csproj", "{B3F64929-6869-A921-4585-0907A4E0F1BE}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Morsley.UK.Mobile.API", "Morsley.UK.Mobile.API\Morsley.UK.Mobile.API.csproj", "{F75D5113-6912-45A2-9299-948B983F3215}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "AzureDevOps", "AzureDevOps", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
 	ProjectSection(SolutionItems) = preProject
-		pipeline-cd.yaml = pipeline-cd.yaml
-		pipeline-ci.yaml = pipeline-ci.yaml
+		cd-pipeline.yaml = cd-pipeline.yaml
+		ci-pipeline.yaml = ci-pipeline.yaml
 	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{5FC2F632-1072-4698-BE02-3009D584BC7C}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{06E946F3-282B-49CE-A205-EC164934DA3B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Morsley.UK.Mobile", "src\Morsley.UK.Mobile\Morsley.UK.Mobile.csproj", "{F32C969F-EA5A-435A-AAA3-F470D7A46562}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Morsley.UK.Mobile.API", "src\Morsley.UK.Mobile.API\Morsley.UK.Mobile.API.csproj", "{F3D0E115-810E-D9B9-C9DA-8DAAF96724FF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Morsley.UK.Mobile.UnitTests", "tests\Morsley.UK.Mobile.UnitTests\Morsley.UK.Mobile.UnitTests.csproj", "{0D683D13-6582-40A8-A949-73079FDA431E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Morsley.UK.Mobile.Console", "tests\Morsley.UK.Mobile.Console\Morsley.UK.Mobile.Console.csproj", "{7E19EC91-ACAE-A697-F5F0-71AEF0782F55}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -28,24 +36,32 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{D9508508-CBBA-966F-D64D-78C18EE816B3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{D9508508-CBBA-966F-D64D-78C18EE816B3}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{D9508508-CBBA-966F-D64D-78C18EE816B3}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{D9508508-CBBA-966F-D64D-78C18EE816B3}.Release|Any CPU.Build.0 = Release|Any CPU
-		{B3F64929-6869-A921-4585-0907A4E0F1BE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{B3F64929-6869-A921-4585-0907A4E0F1BE}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{B3F64929-6869-A921-4585-0907A4E0F1BE}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{B3F64929-6869-A921-4585-0907A4E0F1BE}.Release|Any CPU.Build.0 = Release|Any CPU
-		{F75D5113-6912-45A2-9299-948B983F3215}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{F75D5113-6912-45A2-9299-948B983F3215}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{F75D5113-6912-45A2-9299-948B983F3215}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{F75D5113-6912-45A2-9299-948B983F3215}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F32C969F-EA5A-435A-AAA3-F470D7A46562}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F32C969F-EA5A-435A-AAA3-F470D7A46562}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F32C969F-EA5A-435A-AAA3-F470D7A46562}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F32C969F-EA5A-435A-AAA3-F470D7A46562}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F3D0E115-810E-D9B9-C9DA-8DAAF96724FF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F3D0E115-810E-D9B9-C9DA-8DAAF96724FF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F3D0E115-810E-D9B9-C9DA-8DAAF96724FF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F3D0E115-810E-D9B9-C9DA-8DAAF96724FF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0D683D13-6582-40A8-A949-73079FDA431E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0D683D13-6582-40A8-A949-73079FDA431E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0D683D13-6582-40A8-A949-73079FDA431E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0D683D13-6582-40A8-A949-73079FDA431E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7E19EC91-ACAE-A697-F5F0-71AEF0782F55}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7E19EC91-ACAE-A697-F5F0-71AEF0782F55}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7E19EC91-ACAE-A697-F5F0-71AEF0782F55}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7E19EC91-ACAE-A697-F5F0-71AEF0782F55}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{02EA681E-C7D8-13C7-8484-4AC65E1B71E8} = {8EC462FD-D22E-90A8-E5CE-7E832BA40C5D}
+		{F32C969F-EA5A-435A-AAA3-F470D7A46562} = {5FC2F632-1072-4698-BE02-3009D584BC7C}
+		{F3D0E115-810E-D9B9-C9DA-8DAAF96724FF} = {5FC2F632-1072-4698-BE02-3009D584BC7C}
+		{0D683D13-6582-40A8-A949-73079FDA431E} = {06E946F3-282B-49CE-A205-EC164934DA3B}
+		{7E19EC91-ACAE-A697-F5F0-71AEF0782F55} = {06E946F3-282B-49CE-A205-EC164934DA3B}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {42870848-3EE7-4337-9820-BCCCB77D87BB}

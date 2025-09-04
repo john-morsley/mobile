@@ -1,64 +1,33 @@
-using Microsoft.AspNetCore.Mvc;
+namespace Morsley.UK.Mobile.API.Controllers;
 
-namespace Morsley.UK.Mobile.API.Controllers
+[ApiController]
+[Route("api/sms")]
+public class SmsController(ILogger<SmsController> logger) : ControllerBase
 {
-    [ApiController]
-    [Route("api/sms")]
-    //[Route("[controller]")]
-    public class SmsController : ControllerBase
+    [HttpGet]
+    [Route("get-by-id")]
+    public IActionResult Get(string id)
     {
-        //private static readonly string[] Summaries = new[]
-        //{
-        //    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-        //};
+        // ToDo --> Log call
 
-        private readonly ILogger<SmsController> _logger;
+        // ToDo --> Get from DB
 
-        public SmsController(ILogger<SmsController> logger)
-        {
-            _logger = logger;
-        }
+        return Ok();
+    }
 
-        //[HttpGet(Name = "GetWeatherForecast")]
-        //public Result Get()
-        //{
-        //    //return Enumerable.Range(1, 5).Select(index => new WeatherForecast
-        //    //{
-        //    //    Date = DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-        //    //    TemperatureC = Random.Shared.Next(-20, 55),
-        //    //    Summary = Summaries[Random.Shared.Next(Summaries.Length)]
-        //    //})
-        //    //.ToArray();
-        //    return OkResult();
-        //}
+    [HttpPost]
+    [Route("twilio-callback")]
+    public IActionResult TwilioCallback(
+        [FromForm] string MessageSid, 
+        [FromForm] string MessageStatus, 
+        [FromForm] string To, 
+        [FromForm] string From, 
+        [FromForm] string Body)
+    {
+        // ToDo --> Log call
 
-        //[HttpGet]
-        //[Route("GetSms")]
-        //public IActionResult GetSms(string messageSid)
-        //{
-        //    // Get from DB...
+        // ToDo --> Save to DB
 
-        //    return Ok();
-        //}
-
-        [HttpPost]
-        [Route("twilio-callback")]
-        public IActionResult TwilioCallback(
-            [FromForm] string MessageSid, 
-            [FromForm] string MessageStatus, 
-            [FromForm] string To, 
-            [FromForm] string From, 
-            [FromForm] string Body)
-        {
-            // Save to DB...
-            return Ok();
-        }
-
-        [HttpGet]
-        [Route("get-by-id")]
-        public IActionResult Get(string id)
-        {
-            return Ok();
-        }
+        return Ok();
     }
 }

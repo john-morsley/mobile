@@ -1,4 +1,6 @@
-﻿Console.WriteLine("Running Morsley.UK.Mobile.Console\n");
+﻿// See https://aka.ms/new-console-template for more information
+
+Console.WriteLine("Running Morsley.UK.Mobile.Console\n");
 
 var host = Host.CreateDefaultBuilder(args)
     .ConfigureAppConfiguration((ctx, cfg) =>
@@ -38,7 +40,7 @@ try
         Console.WriteLine("Could not determine secondary mobile number to send to.");
     }
 
-    if (!string.IsNullOrWhiteSpace(primaryMobileNumber) &&
+    if (!string.IsNullOrWhiteSpace(primaryMobileNumber) && 
         !string.IsNullOrWhiteSpace(secondaryMobileNumber))
     {
         await sender.SendAsync(secondaryMobileNumber, primaryMobileNumber, message);
