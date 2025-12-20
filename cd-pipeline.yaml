@@ -4,7 +4,7 @@ trigger: none
 
 resources:
   pipelines:
-  - pipeline: dependant-cd-pipeline
+  - pipeline: dependent-cd-pipeline
     source: ci
     project: mobile
     branch: main
@@ -17,7 +17,7 @@ pool:
   vmImage: ubuntu-latest
 
 variables:
-  azureSubscription: 'morsley-uk-mobile'
+  azureSubscription: 'morsley-uk-mobile-sc'
   appName: 'morsley-uk-mobile-api'
   artifactName: 'drop'
   packagePath: 'Morsley.UK.Mobile.API.zip'
@@ -36,7 +36,7 @@ steps:
 
 # Show downloaded artifacts...
 - task: CmdLine@2
-  displayName: "--> Show downloaded artifacts <--"
+  displayName: "--> Show Downloaded Artifacts <--"
   inputs:
     script: |
       echo "Contents of artifacts directory:"
@@ -46,7 +46,7 @@ steps:
 
 # Verify deployment package exists...
 - task: CmdLine@2
-  displayName: "--> Verify deployment package from CI pipeline <--"
+  displayName: "--> Verify Deployment Package From CI Pipeline <--"
   inputs:
     script: |
       if [ -f "$(Pipeline.Workspace)/artifacts/publish/Morsley.UK.Mobile.API.zip" ]; then

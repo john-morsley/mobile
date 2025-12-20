@@ -44,7 +44,7 @@ steps:
   displayName: "--> Run API Unit Tests <--"
   inputs:
     command: test
-    projects: 'tests/Morsley.UK.Tests.UnitTests/Morsley.UK.Tests.UnitTests.csproj'
+    projects: 'tests/Morsley.UK.Mobile.UnitTests/Morsley.UK.Mobile.UnitTests.csproj'
     arguments: '--configuration $(BuildConfiguration) --collect:"XPlat Code Coverage" --settings cobertura.settings.xml'
     publishTestResults: true
 
