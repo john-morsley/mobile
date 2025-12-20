@@ -1,9 +1,9 @@
-﻿Console.WriteLine("Running Morsley.UK.Mobile.Console\n");
+﻿Console.WriteLine("Running Morsley.UK.Mobile.Example\n");
 
 var host = Host.CreateDefaultBuilder(args)
     .ConfigureAppConfiguration((ctx, cfg) =>
     {
-        cfg.AddJsonFile("AppSettings.Console.json", optional: false, reloadOnChange: true);
+        cfg.AddJsonFile("AppSettings.Example.json", optional: false, reloadOnChange: true);
         cfg.AddUserSecrets<Program>();
         cfg.AddEnvironmentVariables();
     })
