@@ -15,7 +15,7 @@
     <Project Path="src/Morsley.UK.Mobile/Morsley.UK.Mobile.csproj" />
   </Folder>
   <Folder Name="/tests/">
-    <Project Path="tests/Morsley.UK.Mobile.Console/Morsley.UK.Mobile.Console.csproj" />
+    <Project Path="tests/Morsley.UK.Mobile.Example/Morsley.UK.Mobile.Example.csproj" />
     <Project Path="tests/Morsley.UK.Mobile.UnitTests/Morsley.UK.Mobile.UnitTests.csproj" />
   </Folder>
 </Solution>
