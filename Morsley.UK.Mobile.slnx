@@ -1,0 +1,21 @@
+<Solution>
+  <Folder Name="/Solution Items/">
+    <File Path=".gitignore" />
+    <File Path="cobertura.settings.xml" />
+    <File Path="docker-compose.yaml" />
+    <File Path="LICENSE" />
+    <File Path="README.md" />
+  </Folder>
+  <Folder Name="/Solution Items/AzureDevOps/">
+    <File Path="cd-pipeline.yaml" />
+    <File Path="ci-pipeline.yaml" />
+  </Folder>
+  <Folder Name="/src/">
+    <Project Path="src/Morsley.UK.Mobile.API/Morsley.UK.Mobile.API.csproj" />
+    <Project Path="src/Morsley.UK.Mobile/Morsley.UK.Mobile.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/Morsley.UK.Mobile.Console/Morsley.UK.Mobile.Console.csproj" />
+    <Project Path="tests/Morsley.UK.Mobile.UnitTests/Morsley.UK.Mobile.UnitTests.csproj" />
+  </Folder>
+</Solution>
