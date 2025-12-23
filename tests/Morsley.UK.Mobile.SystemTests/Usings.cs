@@ -1,0 +1,17 @@
+global using Bogus;
+global using Microsoft.AspNetCore.Hosting;
+global using Microsoft.AspNetCore.Mvc.Testing;
+global using Microsoft.Azure.Cosmos;
+global using Microsoft.Extensions.Configuration;
+global using Microsoft.Extensions.DependencyInjection;
+global using Morsley.UK.Mobile.API.Extensions;
+global using Morsley.UK.Mobile.API.SystemTests;
+global using Microsoft.Extensions.Logging;
+global using Morsley.UK.Mobile.API.Models;
+global using Morsley.UK.Mobile.Common.Models;
+global using Morsley.UK.Mobile.Persistence;
+global using Shouldly;
+global using System.Net.Http;
+global using System.Text;
+global using System.Text.Json;
+global using Testcontainers.CosmosDb;

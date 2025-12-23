@@ -52,3 +52,5 @@ catch (Exception)
 }
 Console.WriteLine("============================== SENDING SMS ==============================\n");
 
+Console.WriteLine("Press any key");
+Console.ReadLine();

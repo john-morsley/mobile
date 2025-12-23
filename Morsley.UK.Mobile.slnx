@@ -12,10 +12,14 @@
   </Folder>
   <Folder Name="/src/">
     <Project Path="src/Morsley.UK.Mobile.API/Morsley.UK.Mobile.API.csproj" />
+    <Project Path="src/Morsley.UK.Mobile.Common/Morsley.UK.Mobile.Common.csproj" />
+    <Project Path="src/Morsley.UK.Mobile.Persistence/Morsley.UK.Mobile.Persistence.csproj" />
+    <Project Path="src/Morsley.UK.Mobile.Secrets/Morsley.UK.Mobile.Secrets.csproj" />
     <Project Path="src/Morsley.UK.Mobile/Morsley.UK.Mobile.csproj" />
   </Folder>
   <Folder Name="/tests/">
     <Project Path="tests/Morsley.UK.Mobile.Example/Morsley.UK.Mobile.Example.csproj" />
+    <Project Path="tests/Morsley.UK.Mobile.SystemTests/Morsley.UK.Mobile.SystemTests.csproj" Id="c4ef0638-ed82-4ada-9ad8-b656a48d64a4" />
     <Project Path="tests/Morsley.UK.Mobile.UnitTests/Morsley.UK.Mobile.UnitTests.csproj" />
   </Folder>
 </Solution>

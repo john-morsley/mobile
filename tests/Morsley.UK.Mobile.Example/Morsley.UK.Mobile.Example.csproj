@@ -21,4 +21,10 @@
     <ProjectReference Include="..\..\src\Morsley.UK.Mobile\Morsley.UK.Mobile.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="AppSettings.Example.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>

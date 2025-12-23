@@ -8,8 +8,28 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="AspNetCore.HealthChecks.CosmosDb" Version="9.0.0" />
+    <PackageReference Include="AspNetCore.HealthChecks.UI.Client" Version="9.0.0" />
+    <PackageReference Include="Azure.Extensions.AspNetCore.Configuration.Secrets" Version="1.4.0" />
+    <PackageReference Include="Azure.Identity" Version="1.17.1" />
     <PackageReference Include="Microsoft.AspNetCore.StaticFiles" Version="2.3.0" />
-    <PackageReference Include="Swashbuckle.AspNetCore" Version="9.0.4" />
+    <PackageReference Include="Microsoft.Extensions.Diagnostics.HealthChecks" Version="10.0.1" />
+    <PackageReference Include="Microsoft.Extensions.Logging.AzureAppServices" Version="10.0.1" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="10.1.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Morsley.UK.Mobile.Common\Morsley.UK.Mobile.Common.csproj" />
+    <ProjectReference Include="..\Morsley.UK.Mobile.Persistence\Morsley.UK.Mobile.Persistence.csproj" />
+    <ProjectReference Include="..\Morsley.UK.Mobile.Secrets\Morsley.UK.Mobile.Secrets.csproj" />
+    <ProjectReference Include="..\Morsley.UK.Mobile\Morsley.UK.Mobile.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Update="AppSettings.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
 </Project>
