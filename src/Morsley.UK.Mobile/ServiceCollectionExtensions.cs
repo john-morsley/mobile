@@ -10,8 +10,6 @@ public static class ServiceCollectionExtensions
         ArgumentNullException.ThrowIfNull(services);
         ArgumentNullException.ThrowIfNull(configuration);
 
-        var test = configuration.GetSection(sectionName);
-
         services
             .AddOptions<TwilioSettings>()
             .Bind(configuration.GetSection(sectionName))

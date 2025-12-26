@@ -2,11 +2,11 @@
 
 public class TwilioSettings
 {
-    public required string AccountSid { get; set; }
+    public string AccountSid { get; set; } = string.Empty;
 
-    public required string AuthToken { get; set; }
+    public string AuthToken { get; set; } = string.Empty;
 
-    public required string PrimaryMobileNumber { get; set; }
+    public string PrimaryMobileNumber { get; set; } = string.Empty;
 
-    public required string SecondaryMobileNumber { get; set; }
+    public string SecondaryMobileNumber { get; set; } = string.Empty;
 }
