@@ -4,10 +4,9 @@ namespace Morsley.UK.Mobile.API.Controllers;
 [Route("api/sms")]
 public class SmsController(
     ILogger<SmsController> logger,
-    ISmsReader smsReader,
     ISmsSender smsSender,
-    IReceivedSmsPersistenceService receivedPersistenceService,
-    ISentSmsPersistenceService sentPersistenceService,
+    ISmsReceivedPersistenceService receivedPersistenceService,
+    ISmsSentPersistenceService sentPersistenceService,
     IOptions<TwilioSettings> twilioOptions) : ControllerBase
 {
     private readonly TwilioSettings _twilio = twilioOptions.Value;
@@ -134,27 +133,23 @@ public class SmsController(
         }
     }
 
-
     [HttpPost]
-    [Route("send-message")]
+    [Route("send")]
     public async Task<IActionResult> Send(SendableSmsMessage sendable)
     {
         if (sendable == null) return BadRequest("SMS");
         if (string.IsNullOrEmpty(sendable.To)) return BadRequest("SMS To cannoy be empty");
         if (string.IsNullOrEmpty(sendable.Message)) return BadRequest("SMS Message cannot be empty");
 
-        // ToDo --> Log call
         logger.LogInformation("Sending SMS to: {To}", sendable!.To);
         logger.LogInformation("Sending SMS to: {Message}", sendable!.Message);
 
-        // ToDo --> Send SMS
         await smsSender.SendAsync(
             toNumber: sendable.To,
             fromNumber: _twilio.SecondaryMobileNumber,
             message: sendable.Message);
         logger.LogInformation("smsSender.SendAsync completed");
 
-        // ToDo --> Save to DB
         var sent = sendable.ToSmsMessage();
         sent.From = _twilio.SecondaryMobileNumber;
 

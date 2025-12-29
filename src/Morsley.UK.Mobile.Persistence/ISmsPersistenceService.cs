@@ -6,7 +6,7 @@ public interface ISmsPersistenceService
 
     Task<SmsMessage?> GetByIdAsync(string id, CancellationToken cancellationToken = default);
 
-    //Task<PaginatedResponse<SmsMessage>> GetPageAsync(PaginationRequest pagination, CancellationToken cancellationToken = default);
+    Task<PaginatedResponse<SmsMessage>> GetPageAsync(PaginationRequest pagination, CancellationToken cancellationToken = default);
 
     Task<string> SaveAsync(SmsMessage sms, CancellationToken cancellationToken = default);
 }

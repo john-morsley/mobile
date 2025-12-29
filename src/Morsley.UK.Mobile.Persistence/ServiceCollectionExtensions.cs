@@ -1,3 +1,6 @@
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+
 namespace Morsley.UK.Mobile.Persistence;
 
 public static class ServiceCollectionExtensions
@@ -57,33 +60,24 @@ public static class ServiceCollectionExtensions
             return new CosmosClient(options.Endpoint, options.PrimaryReadWriteKey, cosmosClientOptions);
         });
 
-        // Register sent SMS persistence service
-        services.AddScoped<ISentSmsPersistenceService>(serviceProvider =>
+
+        services.AddScoped<ISmsSentPersistenceService>(serviceProvider =>
         {
             var cosmosClient = serviceProvider.GetRequiredService<CosmosClient>();
             var options = serviceProvider.GetRequiredService<IOptions<CosmosDbOptions>>().Value;
-            var logger = serviceProvider.GetRequiredService<ILogger<CosmosDbMobileSentPersistenceService>>();
+            var loggerFactory = serviceProvider.GetRequiredService<ILoggerFactory>();
 
-            return new CosmosDbMobileSentPersistenceService(
-                cosmosClient,
-                options,
-                logger);
+            return new CosmosDbMobileSentPersistenceService(cosmosClient, options, loggerFactory);
         });
 
-        // Register received SMS persistence service
-        services.AddScoped<IReceivedSmsPersistenceService>(serviceProvider =>
+        services.AddScoped<ISmsReceivedPersistenceService>(serviceProvider =>
         {
             var cosmosClient = serviceProvider.GetRequiredService<CosmosClient>();
             var options = serviceProvider.GetRequiredService<IOptions<CosmosDbOptions>>().Value;
-            var logger = serviceProvider.GetRequiredService<ILogger<CosmosDbMobileReceivedPersistenceService>>();
+            var loggerFactory = serviceProvider.GetRequiredService<ILoggerFactory>();
 
-            return new CosmosDbMobileReceivedPersistenceService(
-                cosmosClient, 
-                options, 
-                logger);
+            return new CosmosDbMobileReceivedPersistenceService(cosmosClient, options, loggerFactory);
         });
-
-        //services.AddScoped(serviceProvider => serviceProvider.GetRequiredService<ISmsPersistenceService>());
 
         return services;
     }
@@ -141,25 +135,23 @@ public static class ServiceCollectionExtensions
             return new CosmosClient(options.Endpoint, options.PrimaryReadWriteKey, cosmosClientOptions);
         });
 
-        services.AddScoped<ISentSmsPersistenceService>(serviceProvider =>
+        services.AddScoped<ISmsSentPersistenceService>(serviceProvider =>
         {
             var cosmosClient = serviceProvider.GetRequiredService<CosmosClient>();
             var options = serviceProvider.GetRequiredService<IOptions<CosmosDbOptions>>().Value;
-            var logger = serviceProvider.GetRequiredService<ILogger<CosmosDbMobileSentPersistenceService>>();
+            var loggerFactory = serviceProvider.GetRequiredService<ILoggerFactory>();
 
-            return new CosmosDbMobileSentPersistenceService(cosmosClient, options, logger);
+            return new CosmosDbMobileSentPersistenceService(cosmosClient, options, loggerFactory);
         });
 
-        services.AddScoped<IReceivedSmsPersistenceService>(serviceProvider =>
+        services.AddScoped<ISmsReceivedPersistenceService>(serviceProvider =>
         {
             var cosmosClient = serviceProvider.GetRequiredService<CosmosClient>();
             var options = serviceProvider.GetRequiredService<IOptions<CosmosDbOptions>>().Value;
-            var logger = serviceProvider.GetRequiredService<ILogger<CosmosDbMobileReceivedPersistenceService>>();
+            var loggerFactory = serviceProvider.GetRequiredService<ILoggerFactory>();
 
-            return new CosmosDbMobileReceivedPersistenceService(cosmosClient, options, logger);
+            return new CosmosDbMobileReceivedPersistenceService(cosmosClient, options, loggerFactory);
         });
-
-        //services.AddScoped(serviceProvider => serviceProvider.GetRequiredService<ISmsPersistenceService>());
 
         return services;
     }

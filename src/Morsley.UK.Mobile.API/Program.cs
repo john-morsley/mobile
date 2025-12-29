@@ -18,7 +18,6 @@ builder.Services.AddSingleton<IValidateOptions<TwilioSettings>, TwilioSettingsVa
 
 builder.Services.AddControllersWithViews();
 
-builder.Services.AddSmsReader(builder.Configuration);
 builder.Services.AddSmsSender(builder.Configuration);
 builder.Services.AddMobilePersistence(builder.Configuration);
 

@@ -1,181 +1,184 @@
 namespace Morsley.UK.Mobile.Persistence;
 
-public abstract class CosmosDbMobilePersistenceService //: ISmsPersistenceService, ISentSmsPersistenceService, IReceivedSmsPersistenceService
+public abstract class CosmosDbMobilePersistenceService
 {
     protected readonly Container _container;
-    //private readonly ILogger<CosmosDbMobilePersistenceService> _logger;
 
     public CosmosDbMobilePersistenceService(
         CosmosClient cosmosClient, 
         string databaseName,
-        string containerName)
+        string containerName,
+        ILoggerFactory loggerFactory)
     {
         _container = cosmosClient.GetContainer(databaseName, containerName);
+
+        var t = GetType();
+        Logger = loggerFactory.CreateLogger(t);
     }
 
-    //public async Task<bool> DeleteByIdAsync(string id, CancellationToken cancellationToken = default)
-    //{
-    //    try
-    //    {
-    //        _logger.LogInformation("Deleting SMS with ID: {EmailId}", id);
+    protected ILogger Logger { get; }
 
-    //        // First, find the SMS to get its partition key
-    //        var sms = await GetByIdAsync(id, cancellationToken);
-    //        if (sms == null)
-    //        {
-    //            _logger.LogWarning("SMS with ID: {SmsId} not found for deletion", id);
-    //            return false;
-    //        }
+    public async Task<bool> DeleteByIdAsync(string id, CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            Logger.LogInformation("Deleting SMS with ID: {EmailId}", id);
 
-    //        var smsDocument = sms.ToDocument();
-    //        await _container.DeleteItemAsync<SmsDocument>(id, new PartitionKey(smsDocument.PartitionKey));
+            var sms = await GetByIdAsync(id, cancellationToken);
+            if (sms == null)
+            {
+                Logger.LogWarning("SMS with ID: {SmsId} not found for deletion", id);
+                return false;
+            }
 
-    //        _logger.LogInformation("Successfully deleted email with ID: {SmsId}", id);
-    //        return true;
-    //    }
-    //    catch (CosmosException ex) when (ex.StatusCode == System.Net.HttpStatusCode.NotFound)
-    //    {
-    //        _logger.LogWarning("Sms with ID: {SmsId} not found for deletion", id);
-    //        return false;
-    //    }
-    //    catch (CosmosException ex)
-    //    {
-    //        _logger.LogError(ex, "Failed to delete SMS with ID: {SmsId}. Status: {Status}", id, ex.StatusCode);
-    //        throw;
-    //    }
-    //    catch (Exception ex)
-    //    {
-    //        _logger.LogError(ex, "Unexpected error deleting SMS with ID: {SmsId}", id);
-    //        throw;
-    //    }
-    //}
+            var smsDocument = sms.ToDocument();
+            await _container.DeleteItemAsync<SmsDocument>(id, new PartitionKey(smsDocument.PartitionKey));
 
-    //public async Task<SmsMessage?> GetByIdAsync(string id, CancellationToken cancellationToken = default)
-    //{
-    //    try
-    //    {
-    //        _logger.LogInformation("Retrieving SMS with ID: {SmsId}", id);
+            Logger.LogInformation("Successfully deleted email with ID: {SmsId}", id);
+            return true;
+        }
+        catch (CosmosException ex) when (ex.StatusCode == System.Net.HttpStatusCode.NotFound)
+        {
+            Logger.LogWarning("Sms with ID: {SmsId} not found for deletion", id);
+            return false;
+        }
+        catch (CosmosException ex)
+        {
+            Logger.LogError(ex, "Failed to delete SMS with ID: {SmsId}. Status: {Status}", id, ex.StatusCode);
+            throw;
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError(ex, "Unexpected error deleting SMS with ID: {SmsId}", id);
+            throw;
+        }
+    }
 
-    //        // Since we don't know the partition key for the email, we need to query across partitions
-    //        var query = _container.GetItemQueryIterator<SmsDocument>(
-    //            $"SELECT * " +
-    //            $"  FROM c " +
-    //            $" WHERE c.id = '{id}'");
+    public async Task<SmsMessage?> GetByIdAsync(string id, CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            Logger.LogInformation("Retrieving SMS with ID: {SmsId}", id);
 
-    //        while (query.HasMoreResults)
-    //        {
-    //            var response = await query.ReadNextAsync();
-    //            var smsDocument = response.FirstOrDefault();
-    //            if (smsDocument != null)
-    //            {
-    //                _logger.LogInformation("Successfully retrieved SMS with ID: {SmsId}", id);
-    //                return smsDocument.ToSentSmsMessage();
-    //            }
-    //        }
+            var query = _container.GetItemQueryIterator<SmsDocument>(
+                $"SELECT * " +
+                $"  FROM c " +
+                $" WHERE c.id = '{id}'");
 
-    //        _logger.LogWarning("SMS with ID: {SmsId} not found", id);
-    //        return null;
-    //    }
-    //    catch (CosmosException ex)
-    //    {
-    //        _logger.LogError(ex, "Failed to retrieve email with ID: {EmailId}. Status: {Status}", id, ex.StatusCode);
-    //        throw;
-    //    }
-    //    catch (Exception ex)
-    //    {
-    //        _logger.LogError(ex, "Unexpected error retrieving email with ID: {EmailId}", id);
-    //        throw;
-    //    }
-    //}
+            while (query.HasMoreResults)
+            {
+                var response = await query.ReadNextAsync();
+                var smsDocument = response.FirstOrDefault();
+                if (smsDocument != null)
+                {
+                    Logger.LogInformation("Successfully retrieved SMS with ID: {SmsId}", id);
+                    return smsDocument.ToSentSmsMessage();
+                }
+            }
 
-    //public async Task<string> SaveAsync(SmsMessage sms, CancellationToken cancellationToken = default)
-    //{
-    //    try
-    //    {
-    //        _logger.LogInformation("Saving SMS");
+            Logger.LogWarning("SMS with ID: {SmsId} not found", id);
+            return null;
+        }
+        catch (CosmosException ex)
+        {
+            Logger.LogError(ex, "Failed to retrieve email with ID: {EmailId}. Status: {Status}", id, ex.StatusCode);
+            throw;
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError(ex, "Unexpected error retrieving email with ID: {EmailId}", id);
+            throw;
+        }
+    }
 
-    //        var smsDocument = sms.ToDocument();
+    public async Task<PaginatedResponse<SmsMessage>> GetPageAsync(PaginationRequest pagination, CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            Logger.LogInformation("Retrieving SMS messages with pagination - Page: {Page}, PageSize: {PageSize}", pagination.Page, pagination.PageSize);
 
-    //        var response = await _container.UpsertItemAsync(smsDocument, new PartitionKey(smsDocument.PartitionKey));
+            var countQuery = _container.GetItemQueryIterator<int>("SELECT VALUE COUNT(1) FROM c");
 
-    //        _logger.LogInformation("Successfully saved SMS with ID: {SmsId}. Request charge: {RequestCharge}", sms.Id, response.RequestCharge);
+            int totalCount = 0;
+            while (countQuery.HasMoreResults)
+            {
+                var countResponse = await countQuery.ReadNextAsync();
+                totalCount = countResponse.FirstOrDefault();
+                break;
+            }
 
-    //        return response.Resource.Id;
-    //    }
-    //    catch (CosmosException ex)
-    //    {
-    //        _logger.LogError(ex, "Failed to save SMS: Status: {Status}, Message: {Message}", ex.StatusCode, ex.Message);
-    //        throw;
-    //    }
-    //    catch (Exception ex)
-    //    {
-    //        _logger.LogError(ex, "Unexpected error saving SMS");
-    //        throw;
-    //    }
-    //}
+            var queryText =
+                $"""
+                  SELECT *
+                    FROM c
+                ORDER BY c.CreatedAt DESC
+                  OFFSET {pagination.Skip}
+                   LIMIT {pagination.PageSize}
+                """;
 
-    //public async Task<PaginatedResponse<SmsMessage>> GetPageAsync(PaginationRequest pagination, CancellationToken cancellationToken = default)
-    //{
-    //    try
-    //    {
-    //        _logger.LogInformation("Retrieving SMS messages with pagination - Page: {Page}, PageSize: {PageSize}", pagination.Page, pagination.PageSize);
+            var query = _container.GetItemQueryIterator<SmsDocument>(queryText);
 
-    //        var countQuery = _container.GetItemQueryIterator<int>("SELECT VALUE COUNT(1) FROM c");
+            var pageOfSmsDocuments = new List<SmsDocument>();
 
-    //        int totalCount = 0;
-    //        while (countQuery.HasMoreResults)
-    //        {
-    //            var countResponse = await countQuery.ReadNextAsync();
-    //            totalCount = countResponse.FirstOrDefault();
-    //            break;
-    //        }
+            while (query.HasMoreResults)
+            {
+                var response = await query.ReadNextAsync();
+                pageOfSmsDocuments.AddRange(response.ToList());
+            }
 
-    //        var queryText =
-    //            $"""
-    //              SELECT *
-    //                FROM c
-    //            ORDER BY c.CreatedAt DESC
-    //              OFFSET {pagination.Skip}
-    //               LIMIT {pagination.PageSize}
-    //            """;
+            var pageOfSmsMessages = pageOfSmsDocuments.ToSentSmsMessages();
 
-    //        var query = _container.GetItemQueryIterator<SmsDocument>(queryText);
+            var paginatedResponse = new PaginatedResponse<SmsMessage>
+            {
+                Items = pageOfSmsMessages,
+                Page = pagination.Page,
+                PageSize = pagination.PageSize,
+                TotalItems = totalCount
+            };
 
-    //        var pageOfSmsDocuments = new List<SmsDocument>();
+            Logger.LogInformation(
+                "Successfully retrieved {Count} emails (Page {Page}/{TotalPages})",
+                pageOfSmsMessages.Count(),
+                paginatedResponse.Page,
+                paginatedResponse.TotalPages);
 
-    //        while (query.HasMoreResults)
-    //        {
-    //            var response = await query.ReadNextAsync();
-    //            pageOfSmsDocuments.AddRange(response.ToList());
-    //        }
+            return paginatedResponse;
+        }
+        catch (CosmosException ex)
+        {
+            Logger.LogError(ex, "Failed to retrieve paginated emails. Status: {Status}", ex.StatusCode);
+            throw;
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError(ex, "Unexpected error retrieving paginated emails");
+            throw;
+        }
+    }
 
-    //        var pageOfSmsMessages = pageOfSmsDocuments.ToSentSmsMessages();
+    public async Task<string> SaveAsync(SmsMessage sms, CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            Logger.LogInformation("Saving SMS");
 
-    //        var paginatedResponse = new PaginatedResponse<SmsMessage>
-    //        {
-    //            Items = pageOfSmsMessages,
-    //            Page = pagination.Page,
-    //            PageSize = pagination.PageSize,
-    //            TotalItems = totalCount
-    //        };
+            var smsDocument = sms.ToDocument();
 
-    //        _logger.LogInformation(
-    //            "Successfully retrieved {Count} emails (Page {Page}/{TotalPages})",
-    //            pageOfSmsMessages.Count(), 
-    //            paginatedResponse.Page, 
-    //            paginatedResponse.TotalPages);
+            var response = await _container.UpsertItemAsync(smsDocument, new PartitionKey(smsDocument.PartitionKey));
 
-    //        return paginatedResponse;
-    //    }
-    //    catch (CosmosException ex)
-    //    {
-    //        _logger.LogError(ex, "Failed to retrieve paginated emails. Status: {Status}", ex.StatusCode);
-    //        throw;
-    //    }
-    //    catch (Exception ex)
-    //    {
-    //        _logger.LogError(ex, "Unexpected error retrieving paginated emails");
-    //        throw;
-    //    }
-    //}
+            Logger.LogInformation("Successfully saved SMS with ID: {SmsId}. Request charge: {RequestCharge}", sms.Id, response.RequestCharge);
+
+            return response.Resource.Id;
+        }
+        catch (CosmosException ex)
+        {
+            Logger.LogError(ex, "Failed to save SMS: Status: {Status}, Message: {Message}", ex.StatusCode, ex.Message);
+            throw;
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError(ex, "Unexpected error saving SMS");
+            throw;
+        }
+    }
 }
