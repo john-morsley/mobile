@@ -58,32 +58,30 @@ public static class ServiceCollectionExtensions
         });
 
         // Register sent SMS persistence service
-        services.AddScoped<ISmsPersistenceService>(serviceProvider =>
+        services.AddScoped<ISentSmsPersistenceService>(serviceProvider =>
         {
             var cosmosClient = serviceProvider.GetRequiredService<CosmosClient>();
             var options = serviceProvider.GetRequiredService<IOptions<CosmosDbOptions>>().Value;
-            var logger = serviceProvider.GetRequiredService<ILogger<CosmosDbMobilePersistenceService>>();
+            var logger = serviceProvider.GetRequiredService<ILogger<CosmosDbMobileSentPersistenceService>>();
 
-            return new CosmosDbMobilePersistenceService(
+            return new CosmosDbMobileSentPersistenceService(
                 cosmosClient,
-                options.DatabaseName,
-                options.SentSmsContainerName,
+                options,
                 logger);
         });
 
-        //// Register received SMS persistence service
-        //services.AddScoped<IReceivedSmsPersistenceService>(serviceProvider =>
-        //{
-        //    var cosmosClient = serviceProvider.GetRequiredService<CosmosClient>();
-        //    var options = serviceProvider.GetRequiredService<IOptions<CosmosDbOptions>>().Value;
-        //    var logger = serviceProvider.GetRequiredService<ILogger<CosmosDbMobilePersistenceService>>();
+        // Register received SMS persistence service
+        services.AddScoped<IReceivedSmsPersistenceService>(serviceProvider =>
+        {
+            var cosmosClient = serviceProvider.GetRequiredService<CosmosClient>();
+            var options = serviceProvider.GetRequiredService<IOptions<CosmosDbOptions>>().Value;
+            var logger = serviceProvider.GetRequiredService<ILogger<CosmosDbMobileReceivedPersistenceService>>();
 
-        //    return new CosmosDbMobilePersistenceService(
-        //        cosmosClient, 
-        //        options.DatabaseName, 
-        //        options.ReceivedSmsContainerName, 
-        //        logger);
-        //});
+            return new CosmosDbMobileReceivedPersistenceService(
+                cosmosClient, 
+                options, 
+                logger);
+        });
 
         //services.AddScoped(serviceProvider => serviceProvider.GetRequiredService<ISmsPersistenceService>());
 
@@ -143,34 +141,24 @@ public static class ServiceCollectionExtensions
             return new CosmosClient(options.Endpoint, options.PrimaryReadWriteKey, cosmosClientOptions);
         });
 
-        // Register sent email persistence service
-        services.AddScoped<ISmsPersistenceService>(serviceProvider =>
+        services.AddScoped<ISentSmsPersistenceService>(serviceProvider =>
         {
             var cosmosClient = serviceProvider.GetRequiredService<CosmosClient>();
             var options = serviceProvider.GetRequiredService<IOptions<CosmosDbOptions>>().Value;
-            var logger = serviceProvider.GetRequiredService<ILogger<CosmosDbMobilePersistenceService>>();
+            var logger = serviceProvider.GetRequiredService<ILogger<CosmosDbMobileSentPersistenceService>>();
 
-            return new CosmosDbMobilePersistenceService(
-                cosmosClient,
-                options.DatabaseName,
-                options.SentSmsContainerName,
-                logger);
+            return new CosmosDbMobileSentPersistenceService(cosmosClient, options, logger);
         });
 
-        // Register received email persistence service
-        //services.AddScoped<IReceivedSmsPersistenceService>(serviceProvider =>
-        //{
-        //    var cosmosClient = serviceProvider.GetRequiredService<CosmosClient>();
-        //    var options = serviceProvider.GetRequiredService<IOptions<CosmosDbOptions>>().Value;
-        //    var logger = serviceProvider.GetRequiredService<ILogger<CosmosDbMobilePersistenceService>>();
+        services.AddScoped<IReceivedSmsPersistenceService>(serviceProvider =>
+        {
+            var cosmosClient = serviceProvider.GetRequiredService<CosmosClient>();
+            var options = serviceProvider.GetRequiredService<IOptions<CosmosDbOptions>>().Value;
+            var logger = serviceProvider.GetRequiredService<ILogger<CosmosDbMobileReceivedPersistenceService>>();
 
-        //    return new CosmosDbMobilePersistenceService(
-        //        cosmosClient,
-        //        options.DatabaseName,
-        //        options.ReceivedSmsContainerName,
-        //        logger);
-        //});
-        
+            return new CosmosDbMobileReceivedPersistenceService(cosmosClient, options, logger);
+        });
+
         //services.AddScoped(serviceProvider => serviceProvider.GetRequiredService<ISmsPersistenceService>());
 
         return services;

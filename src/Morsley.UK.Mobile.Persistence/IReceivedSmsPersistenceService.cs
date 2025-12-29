@@ -1,7 +1,6 @@
-//namespace Morsley.UK.Mobile.Persistence;
+namespace Morsley.UK.Mobile.Persistence;
 
-//public interface IReceivedSmsPersistenceService : IMobilePersistenceService
-//{
-//    // Inherits all methods from IMobilePersistenceService
-//    // This interface is specifically for received SMS operations
-//}
+public interface IReceivedSmsPersistenceService : ISmsPersistenceService
+{
+    Task<PaginatedResponse<SmsMessage>> GetPageAsync(PaginationRequest pagination, CancellationToken cancellationToken = default);
+}

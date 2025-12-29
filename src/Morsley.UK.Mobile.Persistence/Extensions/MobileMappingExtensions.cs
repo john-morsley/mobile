@@ -2,11 +2,11 @@ namespace Morsley.UK.Mobile.Persistence.Extensions;
 
 public static class MobileMappingExtensions
 {
-    public static SmsDocument ToDocument(this Common.Models.SmsMessage message)
+    public static SmsDocument ToDocument(this SmsMessage message)
     {
         if (message is null) throw new ArgumentNullException(nameof(message));
 
-        var document = new Documents.SmsDocument
+        var document = new SmsDocument
         {
             
             To = message.To,
@@ -21,9 +21,9 @@ public static class MobileMappingExtensions
         return document;
     }
 
-    public static Common.Models.SmsMessage ToSentSmsMessage(this SmsDocument document)
+    public static SmsMessage ToSentSmsMessage(this SmsDocument document)
     {
-        return new Common.Models.SmsMessage
+        return new SmsMessage
         {
             Id = document.Id,
             To = document.To,
@@ -35,7 +35,7 @@ public static class MobileMappingExtensions
     /// <summary>
     /// Converts a collection of EmailDocuments to EmailMessages
     /// </summary>
-    public static IEnumerable<Common.Models.SmsMessage> ToSentSmsMessages(this IEnumerable<Documents.SmsDocument> documents)
+    public static IEnumerable<SmsMessage> ToSentSmsMessages(this IEnumerable<SmsDocument> documents)
     {
         return documents.Select(x => x.ToSentSmsMessage());
     }

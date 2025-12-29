@@ -41,7 +41,7 @@ try
     if (!string.IsNullOrWhiteSpace(primaryMobileNumber) &&
         !string.IsNullOrWhiteSpace(secondaryMobileNumber))
     {
-        await sender.SendAsync(secondaryMobileNumber, primaryMobileNumber, message);
+        await sender.SendAsync(primaryMobileNumber, secondaryMobileNumber, message);
     }
 
     Console.WriteLine("Successfully sent");

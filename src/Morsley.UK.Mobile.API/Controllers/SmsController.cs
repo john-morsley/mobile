@@ -1,6 +1,3 @@
-using Morsley.UK.Mobile.Common.Models;
-using Twilio.Security;
-
 namespace Morsley.UK.Mobile.API.Controllers;
 
 [ApiController]
@@ -9,24 +6,138 @@ public class SmsController(
     ILogger<SmsController> logger,
     ISmsReader smsReader,
     ISmsSender smsSender,
-    ISmsPersistenceService smsPersistenceService,
+    IReceivedSmsPersistenceService receivedPersistenceService,
+    ISentSmsPersistenceService sentPersistenceService,
     IOptions<TwilioSettings> twilioOptions) : ControllerBase
 {
     private readonly TwilioSettings _twilio = twilioOptions.Value;
 
     [HttpGet]
-    [Route("get-by-id")]
-    public IActionResult GetSmsById(string id)
+    [Route("received/id")]
+    public async Task<IActionResult> GetReceivedByIdAsync(string id, CancellationToken cancellationToken = default)
     {
-        // ToDo --> Log call
+        if (string.IsNullOrWhiteSpace(id))
+        {
+            return BadRequest("SMS ID cannot be null or empty");
+        }
 
-        // ToDo --> Get from DB
+        logger.LogInformation("Getting SMS with ID: {SmsId}", id);
 
-        return Ok();
+        try
+        {
+            var sms = await receivedPersistenceService.GetByIdAsync(id);
+
+            if (sms == null)
+            {
+                return NotFound($"SMS with ID {id} not found");
+            }
+
+            return Ok(sms);
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Error retrieving sms with ID: {SmsId}", id);
+            return StatusCode(500, "An error occurred while retrieving the sms");
+        }
     }
 
+    [HttpGet]
+    [Route("sent/id")]
+    public async Task<IActionResult> GetSentByIdAsync(string id)
+    {
+        if (string.IsNullOrWhiteSpace(id))
+        {
+            return BadRequest("SMS ID cannot be null or empty");
+        }
+
+        logger.LogInformation("Getting sms with ID: {SmsId}", id);
+
+        try
+        {
+            var sms = await sentPersistenceService.GetByIdAsync(id);
+
+            if (sms == null)
+            {
+                return NotFound($"SMS with ID {id} not found");
+            }
+
+            return Ok(sms);
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Error retrieving sms with ID: {SmsId}", id);
+            return StatusCode(500, "An error occurred while retrieving the sms");
+        }
+    }
+
+    [HttpGet]
+    [Route("received/page")]
+    public async Task<IActionResult> GetReceivedPage([FromQuery] PaginationRequest? pagination = null)
+    {
+        pagination ??= new PaginationRequest();
+
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(ModelState);
+        }
+
+        logger.LogInformation("Getting SMS messages with pagination - Page: {Page}, PageSize: {PageSize}", pagination.Page, pagination.PageSize);
+
+        try
+        {
+            var paginated = await receivedPersistenceService.GetPageAsync(pagination);
+
+            logger.LogInformation(
+                "Retrieved {Count} SMS messages (Page {Page}/{TotalPages})",
+                paginated.Count, 
+                paginated.Page, 
+                paginated.TotalPages);
+
+            return Ok(paginated);
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Error retrieving SMS messages");
+            return StatusCode(500, "An error occurred while retrieving SMS messages");
+        }
+    }
+
+    [HttpGet]
+    [Route("sent/page")]
+    public async Task<IActionResult> GetPage([FromQuery] PaginationRequest? pagination = null)
+    {
+        pagination ??= new PaginationRequest();
+
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(ModelState);
+        }
+
+        logger.LogInformation("Getting SMS messages with pagination - Page: {Page}, PageSize: {PageSize}", pagination.Page, pagination.PageSize);
+
+        try
+        {
+            var paginated = await sentPersistenceService.GetPageAsync(pagination);
+
+            logger.LogInformation(
+                "Retrieved {Count} SMS messages (Page {Page}/{TotalPages})",
+                paginated.Count,
+                paginated.Page,
+                paginated.TotalPages);
+
+            return Ok(paginated);
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Error retrieving SMS messages");
+            return StatusCode(500, "An error occurred while retrieving SMS messages");
+        }
+    }
+
+
     [HttpPost]
-    public async Task<IActionResult> SendSms(SendableSmsMessage sendable)
+    [Route("send-message")]
+    public async Task<IActionResult> Send(SendableSmsMessage sendable)
     {
         if (sendable == null) return BadRequest("SMS");
         if (string.IsNullOrEmpty(sendable.To)) return BadRequest("SMS To cannoy be empty");
@@ -39,14 +150,15 @@ public class SmsController(
         // ToDo --> Send SMS
         await smsSender.SendAsync(
             toNumber: sendable.To,
-            fromNumber: _twilio.PrimaryMobileNumber,
+            fromNumber: _twilio.SecondaryMobileNumber,
             message: sendable.Message);
         logger.LogInformation("smsSender.SendAsync completed");
 
         // ToDo --> Save to DB
         var sent = sendable.ToSmsMessage();
+        sent.From = _twilio.SecondaryMobileNumber;
 
-        await smsPersistenceService.SaveSmsAsync(sent);
+        await sentPersistenceService.SaveAsync(sent);
 
         logger.LogInformation("Exiting SendSms");
 
@@ -78,34 +190,9 @@ public class SmsController(
                 Message = callback.Body
             };
 
-            await smsPersistenceService.SaveSmsAsync(inbound, cancellationToken);
+            await receivedPersistenceService.SaveAsync(inbound, cancellationToken);
         }
 
         return Ok();
     }
-}
-
-[BindProperties]
-public sealed class TwilioSmsCallbackRequest
-{
-    [FromForm(Name = "MessageSid")]
-    public string? MessageSid { get; set; }
-
-    [FromForm(Name = "MessageStatus")]
-    public string? MessageStatus { get; set; }
-
-    [FromForm(Name = "SmsSid")]
-    public string? SmsSid { get; set; }
-
-    [FromForm(Name = "SmsStatus")]
-    public string? SmsStatus { get; set; }
-
-    [FromForm(Name = "To")]
-    public string? To { get; set; }
-
-    [FromForm(Name = "From")]
-    public string? From { get; set; }
-
-    [FromForm(Name = "Body")]
-    public string? Body { get; set; }
 }
