@@ -9,4 +9,6 @@ public class SmsMessage
     public string From { get; set; } = string.Empty;
 
     public string Message { get; set; } = string.Empty;
+
+    public DateTime? Created { get; set; }
 }

@@ -162,7 +162,9 @@ public class SmsController(
 
     [HttpPost]
     [Route("twilio-callback")]
-    // Test using ngrok. See ReadMe.md
+    // Testable locally using ngrok. See ReadMe.md
+    // Twilio Primary Number from https://mobile.morsley.uk/api/sms/twilio-callback
+    // Twilio Secondary Number from https://[URL obtained from ngrok]/api/sms/twilio-callback
     public async Task<IActionResult> TwilioCallback([FromForm] TwilioSmsCallbackRequest callback, CancellationToken cancellationToken)
     {
         if (callback is null) return BadRequest();

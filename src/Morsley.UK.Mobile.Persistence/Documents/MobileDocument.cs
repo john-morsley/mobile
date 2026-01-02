@@ -1,11 +1,8 @@
 namespace Morsley.UK.Mobile.Persistence.Documents;
 
-/// <summary>
-/// CosmosDB-specific document model for mobile persistence
-/// </summary>
 public class SmsDocument
 {
-    private DateTime _createdAt = DateTime.UtcNow;
+    private DateTime _created = DateTime.UtcNow;
 
     [JsonProperty("id")]
     public string Id { get; set; } = Uuid.NewDatabaseFriendly(UUIDNext.Database.Other).ToString();
@@ -19,12 +16,12 @@ public class SmsDocument
 
     public string Message { get; set; } = string.Empty;
 
-    public DateTime CreatedAt 
+    public DateTime Created 
     { 
-        get => _createdAt;
+        get => _created;
         set 
         {
-            _createdAt = value;
+            _created = value;
         }
     }
 }

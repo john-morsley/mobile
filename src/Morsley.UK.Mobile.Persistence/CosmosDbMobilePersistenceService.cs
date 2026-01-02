@@ -111,7 +111,7 @@ public abstract class CosmosDbMobilePersistenceService
                 $"""
                   SELECT *
                     FROM c
-                ORDER BY c.CreatedAt DESC
+                ORDER BY c.Created DESC
                   OFFSET {pagination.Skip}
                    LIMIT {pagination.PageSize}
                 """;

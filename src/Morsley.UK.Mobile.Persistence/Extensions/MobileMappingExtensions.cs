@@ -14,9 +14,9 @@ public static class MobileMappingExtensions
             Message = message.Message
         };
 
-        if (message.Id is not null) document.Id = message.Id;        
-
         if (!string.IsNullOrEmpty(message.Id)) document.Id = message.Id;
+
+        if (message.Created is not null) document.Created = (DateTime)message.Created;
 
         return document;
     }
