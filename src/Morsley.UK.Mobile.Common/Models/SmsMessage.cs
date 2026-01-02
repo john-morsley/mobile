@@ -10,5 +10,5 @@ public class SmsMessage
 
     public string Message { get; set; } = string.Empty;
 
-    public DateTime? Created { get; set; }
+    public DateTime? CreatedUtc { get; set; }
 }

@@ -2,7 +2,7 @@ namespace Morsley.UK.Mobile.Persistence.Documents;
 
 public class SmsDocument
 {
-    private DateTime _created = DateTime.UtcNow;
+    private DateTime _createdUtc = DateTime.UtcNow;
 
     [JsonProperty("id")]
     public string Id { get; set; } = Uuid.NewDatabaseFriendly(UUIDNext.Database.Other).ToString();
@@ -16,12 +16,12 @@ public class SmsDocument
 
     public string Message { get; set; } = string.Empty;
 
-    public DateTime Created 
+    public DateTime CreatedUtc 
     { 
-        get => _created;
+        get => _createdUtc;
         set 
         {
-            _created = value;
+            _createdUtc = value;
         }
     }
 }
