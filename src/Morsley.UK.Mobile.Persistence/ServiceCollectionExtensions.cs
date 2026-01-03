@@ -181,13 +181,13 @@ public static class ServiceCollectionExtensions
 
                 logger?.LogInformation("Database '{DatabaseName}' status: {StatusCode}", options.DatabaseName, databaseResponse.StatusCode);
 
-                // Create sent emails container if it doesn't exist
+                // Create sent SMS container if it doesn't exist
                 logger?.LogInformation("Creating container '{ContainerName}'...", options.SentSmsContainerName);
                 var sentContainerProperties = new ContainerProperties(options.SentSmsContainerName, options.PartitionKey);
                 var sentContainerResponse = await databaseResponse.Database.CreateContainerIfNotExistsAsync(sentContainerProperties);
                 logger?.LogInformation("Container '{ContainerName}' status: {StatusCode}", options.SentSmsContainerName, sentContainerResponse.StatusCode);
                 
-                // Create received emails container if it doesn't exist
+                // Create received SMS container if it doesn't exist
                 logger?.LogInformation("Creating container '{ContainerName}'...", options.ReceivedSmsContainerName);
                 var receivedContainerProperties = new ContainerProperties(options.ReceivedSmsContainerName, options.PartitionKey);
                 var receivedContainerResponse = await databaseResponse.Database.CreateContainerIfNotExistsAsync(receivedContainerProperties);

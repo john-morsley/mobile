@@ -1,4 +1,4 @@
-namespace Morsley.UK.Email.API.Controllers;
+namespace Morsley.UK.Mobile.API.Controllers;
 
 /// <summary>
 /// Health check controller for monitoring application status

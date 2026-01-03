@@ -8,7 +8,7 @@ public class CosmosDbSettings
 
     public string PartitionKey { get; set; } = string.Empty;
 
-    public string SentEmailsContainerName { get; set; } = string.Empty;
+    public string SentSmsContainerName { get; set; } = string.Empty;
 
-    public string ReceivedEmailsContainerName { get; set; } = string.Empty;
+    public string ReceivedSmsContainerName { get; set; } = string.Empty;
 }

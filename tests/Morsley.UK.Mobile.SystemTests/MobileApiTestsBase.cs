@@ -42,11 +42,11 @@ public abstract class MobileApiTestsBase
     [SetUp]
     public async Task SetUp()
     {
-        await CosmosFixture.RemoveContainer(CosmosDbSettings.DatabaseName, CosmosDbSettings.ReceivedEmailsContainerName);
-        await CosmosFixture.RemoveContainer(CosmosDbSettings.DatabaseName, CosmosDbSettings.SentEmailsContainerName);
+        await CosmosFixture.RemoveContainer(CosmosDbSettings.DatabaseName, CosmosDbSettings.ReceivedSmsContainerName);
+        await CosmosFixture.RemoveContainer(CosmosDbSettings.DatabaseName, CosmosDbSettings.SentSmsContainerName);
 
-        await CosmosFixture.AddContainer(CosmosDbSettings.DatabaseName, CosmosDbSettings.ReceivedEmailsContainerName, "/id");
-        await CosmosFixture.AddContainer(CosmosDbSettings.DatabaseName, CosmosDbSettings.SentEmailsContainerName, "/id");
+        await CosmosFixture.AddContainer(CosmosDbSettings.DatabaseName, CosmosDbSettings.ReceivedSmsContainerName, "/id");
+        await CosmosFixture.AddContainer(CosmosDbSettings.DatabaseName, CosmosDbSettings.SentSmsContainerName, "/id");
 
         Factory = new WebApplicationFactory<Program>().WithWebHostBuilder(builder =>
         {

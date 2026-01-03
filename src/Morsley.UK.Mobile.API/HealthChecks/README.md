@@ -1,6 +1,6 @@
-# Health Checks for Morsley.UK.Email.API
+# Health Checks for Morsley.UK.Mobile.API
 
-This directory contains health check implementations for monitoring the Email API application.
+This directory contains health check implementations for monitoring the Mobile API application.
 
 ## Available Health Checks
 
@@ -14,8 +14,8 @@ This directory contains health check implementations for monitoring the Email AP
 - **Tags**: `ready`, `db`
 - **Checks**:
   - Database accessibility
-  - Sent emails container availability
-  - Received emails container availability
+  - Sent SMS container availability
+  - Received SMS container availability
 - **Usage**: Kubernetes readiness probes
 
 ## Health Check Endpoints
@@ -65,9 +65,9 @@ This directory contains health check implementations for monitoring the Email AP
     "cosmosdb": {
       "data": {
         "endpoint": "https://your-cosmos.documents.azure.com:443/",
-        "database": "EmailDatabase",
-        "sentEmailsContainer": "SentEmails",
-        "receivedEmailsContainer": "ReceivedEmails"
+        "database": "morsley-uk-cosmos-db",
+        "sentSmsContainer": "sms-sent",
+        "receivedSmsContainer": "sms-received"
       },
       "description": "CosmosDB is accessible and containers are available",
       "duration": "00:00:00.1439878",

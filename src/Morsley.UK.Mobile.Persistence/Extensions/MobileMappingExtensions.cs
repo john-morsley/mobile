@@ -34,7 +34,7 @@ public static class MobileMappingExtensions
     }
 
     /// <summary>
-    /// Converts a collection of EmailDocuments to EmailMessages
+    /// Converts a collection of SmsDocuments to SmsMessages
     /// </summary>
     public static IEnumerable<SmsMessage> ToSentSmsMessages(this IEnumerable<SmsDocument> documents)
     {

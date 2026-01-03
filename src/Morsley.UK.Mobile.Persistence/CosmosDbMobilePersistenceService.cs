@@ -22,7 +22,7 @@ public abstract class CosmosDbMobilePersistenceService
     {
         try
         {
-            Logger.LogInformation("Deleting SMS with ID: {EmailId}", id);
+            Logger.LogInformation("Deleting SMS with ID: {SmsId}", id);
 
             var sms = await GetByIdAsync(id, cancellationToken);
             if (sms == null)
@@ -34,7 +34,7 @@ public abstract class CosmosDbMobilePersistenceService
             var smsDocument = sms.ToDocument();
             await _container.DeleteItemAsync<SmsDocument>(id, new PartitionKey(smsDocument.PartitionKey));
 
-            Logger.LogInformation("Successfully deleted email with ID: {SmsId}", id);
+            Logger.LogInformation("Successfully deleted SMS with ID: {SmsId}", id);
             return true;
         }
         catch (CosmosException ex) when (ex.StatusCode == System.Net.HttpStatusCode.NotFound)
@@ -81,12 +81,12 @@ public abstract class CosmosDbMobilePersistenceService
         }
         catch (CosmosException ex)
         {
-            Logger.LogError(ex, "Failed to retrieve email with ID: {EmailId}. Status: {Status}", id, ex.StatusCode);
+            Logger.LogError(ex, "Failed to retrieve SMS with ID: {SmsId}. Status: {Status}", id, ex.StatusCode);
             throw;
         }
         catch (Exception ex)
         {
-            Logger.LogError(ex, "Unexpected error retrieving email with ID: {EmailId}", id);
+            Logger.LogError(ex, "Unexpected error retrieving SMS with ID: {SmsId}", id);
             throw;
         }
     }
@@ -137,7 +137,7 @@ public abstract class CosmosDbMobilePersistenceService
             };
 
             Logger.LogInformation(
-                "Successfully retrieved {Count} emails (Page {Page}/{TotalPages})",
+                "Successfully retrieved {Count} SMS (Page {Page}/{TotalPages})",
                 pageOfSmsMessages.Count(),
                 paginatedResponse.Page,
                 paginatedResponse.TotalPages);
@@ -146,12 +146,12 @@ public abstract class CosmosDbMobilePersistenceService
         }
         catch (CosmosException ex)
         {
-            Logger.LogError(ex, "Failed to retrieve paginated emails. Status: {Status}", ex.StatusCode);
+            Logger.LogError(ex, "Failed to retrieve paginated SMS. Status: {Status}", ex.StatusCode);
             throw;
         }
         catch (Exception ex)
         {
-            Logger.LogError(ex, "Unexpected error retrieving paginated emails");
+            Logger.LogError(ex, "Unexpected error retrieving paginated SMS");
             throw;
         }
     }
@@ -180,5 +180,56 @@ public abstract class CosmosDbMobilePersistenceService
             Logger.LogError(ex, "Unexpected error saving SMS");
             throw;
         }
+    }    
+
+    public async Task DeleteAllAsync(CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            Logger.LogInformation("Deleting all SMS");
+
+            var queryDefinition = new QueryDefinition("SELECT VALUE c.id FROM c");
+
+            var query = _container.GetItemQueryIterator<string>(
+                queryDefinition,
+                requestOptions: new QueryRequestOptions { MaxItemCount = 100 });
+
+            var deletedCount = 0;
+
+            while (query.HasMoreResults)
+            {
+                var response = await query.ReadNextAsync(cancellationToken);
+
+                foreach (var id in response)
+                {
+                    cancellationToken.ThrowIfCancellationRequested();
+
+                    try
+                    {
+                        await _container.DeleteItemAsync<SmsDocument>(
+                            id,
+                            new PartitionKey(id),
+                            cancellationToken: cancellationToken);
+                        deletedCount++;
+                    }
+                    catch (CosmosException ex) when (ex.StatusCode == System.Net.HttpStatusCode.NotFound)
+                    {
+                    }
+                }
+            }
+
+            Logger.LogInformation("Successfully deleted all SMS. Deleted count: {DeletedCount}", deletedCount);
+        }
+        catch (CosmosException ex)
+        {
+            Logger.LogError(ex, "Failed to delete all SMS. Status: {Status}", ex.StatusCode);
+            throw;
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError(ex, "Unexpected error deleting all SMS");
+            throw;
+        }
     }
+
 }

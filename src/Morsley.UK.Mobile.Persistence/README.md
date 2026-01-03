@@ -10,8 +10,8 @@ Configuration expectations:
     "Endpoint": "https://localhost:8081",
     "Key": "[Stored in User Secrets]",
     "DatabaseName": "morsley-uk-db",
-    "SentContainerName": "emails-sent",
-    "ReceivedContainerName": "emails-inbox"
+    "SentContainerName": "sms-sent",
+    "ReceivedContainerName": "sms-received"
   },
   "morsley-uk-cosmos-db-primary-read-write-key": "[This value will come from the Azure KeyVault]",
   "morsley-uk-cosmos-db-secondary-read-write-key": "[This value will come from the Azure KeyVault]",

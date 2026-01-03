@@ -133,6 +133,90 @@ public class SmsController(
         }
     }
 
+    [HttpDelete]
+    [Route("received/id")]
+    public async Task<IActionResult> DeleteReceivedById(string id)
+    {
+        logger.LogInformation("Deleting SMS with ID: {SmsId}", id);
+
+        try
+        {
+            var deleted = await receivedPersistenceService.DeleteByIdAsync(id);
+
+            if (!deleted)
+            {
+                return NotFound($"SMS with ID {id} not found");
+            }
+
+            return NoContent();
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Error deleting SMS with ID: {SmsId}", id);
+            return StatusCode(500, "An error occurred while deleting the SMS");
+        }
+    }
+
+    [HttpDelete]
+    [Route("sent/id")]
+    public async Task<IActionResult> DeleteSentById(string id)
+    {
+        logger.LogInformation("Deleting SMS with ID: {SmsId}", id);
+
+        try
+        {
+            var deleted = await sentPersistenceService.DeleteByIdAsync(id);
+
+            if (!deleted)
+            {
+                return NotFound($"SMS with ID {id} not found");
+            }
+
+            return NoContent();
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Error deleting SMS with ID: {SmsId}", id);
+            return StatusCode(500, "An error occurred while deleting the SMS");
+        }
+    }
+
+    [HttpDelete]
+    [Route("received/all")]
+    public async Task<IActionResult> DeleteAllReceived()
+    {
+        logger.LogInformation("Deleting all received SMS");
+
+        try
+        {
+            await receivedPersistenceService.DeleteAllAsync();
+            return NoContent();
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Error deleting all recieved SMS");
+            return StatusCode(500, "An error occurred while deleting all recieved SMS");
+        }
+    }
+
+    [HttpDelete]
+    [Route("sent/all")]
+    public async Task<IActionResult> DeleteAllSent()
+    {
+        logger.LogInformation("Deleting all sent SMS");
+
+        try
+        {
+            await sentPersistenceService.DeleteAllAsync();
+            return NoContent();
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Error deleting all sent SMS");
+            return StatusCode(500, "An error occurred while deleting all sent SMS");
+        }
+    }
+
     [HttpPost]
     [Route("send")]
     public async Task<IActionResult> Send(SendableSmsMessage sendable)

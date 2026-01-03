@@ -25,10 +25,6 @@ try
 {
     Console.WriteLine("Sending SMS...");
 
-    //Console.WriteLine($"To: {emailTo}");
-    //Console.WriteLine($"Subject: {emailSubject}");
-    //Console.WriteLine($"Body: {emailBody}");
-
     if (string.IsNullOrWhiteSpace(primaryMobileNumber))
     {
         Console.WriteLine("Could not determine primary mobile number to send to.");
