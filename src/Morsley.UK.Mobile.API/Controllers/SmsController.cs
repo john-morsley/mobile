@@ -103,7 +103,7 @@ public class SmsController(
 
     [HttpGet]
     [Route("sent/page")]
-    public async Task<IActionResult> GetPage([FromQuery] PaginationRequest? pagination = null)
+    public async Task<IActionResult> GetSentPage([FromQuery] PaginationRequest? pagination = null)
     {
         pagination ??= new PaginationRequest();
 

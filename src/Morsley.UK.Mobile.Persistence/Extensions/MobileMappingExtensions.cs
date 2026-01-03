@@ -29,6 +29,7 @@ public static class MobileMappingExtensions
             To = document.To,
             From = document.From,
             Message = document.Message,
+            CreatedUtc = document.CreatedUtc
         };
     }
 
