@@ -2,5 +2,5 @@
 
 public interface ISmsSender
 {
-    Task SendAsync(string toNumber, string fromNumber, string message);
+    Task SendAsync(string toNumber, string fromNumber, string message, CancellationToken cancellationToken);
 }

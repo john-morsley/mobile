@@ -11,7 +11,7 @@ public class SmsSender : ISmsSender
         _logger = logger;
     }
 
-    public async Task SendAsync(string toNumber, string fromNumber, string message)
+    public async Task SendAsync(string toNumber, string fromNumber, string message, CancellationToken cancellationToken)
     {
         var settings = _options.CurrentValue;
 
@@ -27,14 +27,23 @@ public class SmsSender : ISmsSender
                 from: new PhoneNumber(fromNumber),
                 body: message);
 
-            var completed = await Task.WhenAny(createTask, Task.Delay(TimeSpan.FromSeconds(20)));
+            var delayTask = Task.Delay(TimeSpan.FromSeconds(20), cancellationToken);
+            var completed = await Task.WhenAny(createTask, delayTask);
             if (completed != createTask)
             {
+                cancellationToken.ThrowIfCancellationRequested();
                 throw new TimeoutException("Timed out waiting for Twilio MessageResource.CreateAsync");
             }
 
+            cancellationToken.ThrowIfCancellationRequested();
+
             var sms = await createTask;
             _logger.LogInformation("Twilio message created. Sid={Sid}; Status={Status}", sms.Sid, sms.Status);
+        }
+        catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+        {
+            _logger.LogInformation("SMS send cancelled. To={To}; From={From}", toNumber, fromNumber);
+            throw;
         }
         catch (Exception ex)
         {

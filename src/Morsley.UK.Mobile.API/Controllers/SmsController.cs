@@ -12,8 +12,8 @@ public class SmsController(
     private readonly TwilioSettings _twilio = twilioOptions.Value;
 
     [HttpGet]
-    [Route("received/id")]
-    public async Task<IActionResult> GetReceivedByIdAsync(string id, CancellationToken cancellationToken = default)
+    [Route("received/{id}")]
+    public async Task<IActionResult> GetReceivedByIdAsync([FromRoute] string id, CancellationToken cancellationToken = default)
     {
         if (string.IsNullOrWhiteSpace(id))
         {
@@ -24,7 +24,7 @@ public class SmsController(
 
         try
         {
-            var sms = await receivedPersistenceService.GetByIdAsync(id);
+            var sms = await receivedPersistenceService.GetByIdAsync(id, cancellationToken);
 
             if (sms == null)
             {
@@ -41,8 +41,8 @@ public class SmsController(
     }
 
     [HttpGet]
-    [Route("sent/id")]
-    public async Task<IActionResult> GetSentByIdAsync(string id)
+    [Route("sent/{id}")]
+    public async Task<IActionResult> GetSentByIdAsync([FromRoute] string id, CancellationToken cancellationToken = default)
     {
         if (string.IsNullOrWhiteSpace(id))
         {
@@ -53,7 +53,7 @@ public class SmsController(
 
         try
         {
-            var sms = await sentPersistenceService.GetByIdAsync(id);
+            var sms = await sentPersistenceService.GetByIdAsync(id, cancellationToken);
 
             if (sms == null)
             {
@@ -71,7 +71,7 @@ public class SmsController(
 
     [HttpGet]
     [Route("received/page")]
-    public async Task<IActionResult> GetReceivedPage([FromQuery] PaginationRequest? pagination = null)
+    public async Task<IActionResult> GetReceivedPage([FromQuery] PaginationRequest? pagination = null, CancellationToken cancellationToken = default)
     {
         pagination ??= new PaginationRequest();
 
@@ -84,7 +84,7 @@ public class SmsController(
 
         try
         {
-            var paginated = await receivedPersistenceService.GetPageAsync(pagination);
+            var paginated = await receivedPersistenceService.GetPageAsync(pagination, cancellationToken);
 
             logger.LogInformation(
                 "Retrieved {Count} SMS messages (Page {Page}/{TotalPages})",
@@ -103,7 +103,7 @@ public class SmsController(
 
     [HttpGet]
     [Route("sent/page")]
-    public async Task<IActionResult> GetSentPage([FromQuery] PaginationRequest? pagination = null)
+    public async Task<IActionResult> GetSentPage([FromQuery] PaginationRequest? pagination = null, CancellationToken cancellationToken = default)
     {
         pagination ??= new PaginationRequest();
 
@@ -116,7 +116,7 @@ public class SmsController(
 
         try
         {
-            var paginated = await sentPersistenceService.GetPageAsync(pagination);
+            var paginated = await sentPersistenceService.GetPageAsync(pagination, cancellationToken);
 
             logger.LogInformation(
                 "Retrieved {Count} SMS messages (Page {Page}/{TotalPages})",
@@ -134,14 +134,14 @@ public class SmsController(
     }
 
     [HttpDelete]
-    [Route("received/id")]
-    public async Task<IActionResult> DeleteReceivedById(string id)
+    [Route("received/{id}")]
+    public async Task<IActionResult> DeleteReceivedById([FromRoute] string id, CancellationToken cancellationToken = default)
     {
         logger.LogInformation("Deleting SMS with ID: {SmsId}", id);
 
         try
         {
-            var deleted = await receivedPersistenceService.DeleteByIdAsync(id);
+            var deleted = await receivedPersistenceService.DeleteByIdAsync(id, cancellationToken);
 
             if (!deleted)
             {
@@ -159,13 +159,13 @@ public class SmsController(
 
     [HttpDelete]
     [Route("sent/id")]
-    public async Task<IActionResult> DeleteSentById(string id)
+    public async Task<IActionResult> DeleteSentById(string id, CancellationToken cancellationToken = default)
     {
         logger.LogInformation("Deleting SMS with ID: {SmsId}", id);
 
         try
         {
-            var deleted = await sentPersistenceService.DeleteByIdAsync(id);
+            var deleted = await sentPersistenceService.DeleteByIdAsync(id, cancellationToken);
 
             if (!deleted)
             {
@@ -183,13 +183,13 @@ public class SmsController(
 
     [HttpDelete]
     [Route("received/all")]
-    public async Task<IActionResult> DeleteAllReceived()
+    public async Task<IActionResult> DeleteAllReceived(CancellationToken cancellationToken = default)
     {
         logger.LogInformation("Deleting all received SMS");
 
         try
         {
-            await receivedPersistenceService.DeleteAllAsync();
+            await receivedPersistenceService.DeleteAllAsync(cancellationToken);
             return NoContent();
         }
         catch (Exception ex)
@@ -201,13 +201,13 @@ public class SmsController(
 
     [HttpDelete]
     [Route("sent/all")]
-    public async Task<IActionResult> DeleteAllSent()
+    public async Task<IActionResult> DeleteAllSent(CancellationToken cancellationToken = default)
     {
         logger.LogInformation("Deleting all sent SMS");
 
         try
         {
-            await sentPersistenceService.DeleteAllAsync();
+            await sentPersistenceService.DeleteAllAsync(cancellationToken);
             return NoContent();
         }
         catch (Exception ex)
@@ -219,7 +219,7 @@ public class SmsController(
 
     [HttpPost]
     [Route("send")]
-    public async Task<IActionResult> Send(SendableSmsMessage sendable)
+    public async Task<IActionResult> Send(SendableSmsMessage sendable, CancellationToken cancellationToken = default)
     {
         if (sendable == null) return BadRequest("SMS");
         if (string.IsNullOrEmpty(sendable.To)) return BadRequest("SMS To cannoy be empty");
@@ -231,13 +231,14 @@ public class SmsController(
         await smsSender.SendAsync(
             toNumber: sendable.To,
             fromNumber: _twilio.SecondaryMobileNumber,
-            message: sendable.Message);
+            message: sendable.Message,
+            cancellationToken);
         logger.LogInformation("smsSender.SendAsync completed");
 
         var sent = sendable.ToSmsMessage();
         sent.From = _twilio.SecondaryMobileNumber;
 
-        await sentPersistenceService.SaveAsync(sent);
+        await sentPersistenceService.SaveAsync(sent, cancellationToken);
 
         logger.LogInformation("Exiting SendSms");
 
@@ -249,7 +250,7 @@ public class SmsController(
     // Testable locally using ngrok. See ReadMe.md
     // Twilio Primary Number from https://mobile.morsley.uk/api/sms/twilio-callback
     // Twilio Secondary Number from https://[URL obtained from ngrok]/api/sms/twilio-callback
-    public async Task<IActionResult> TwilioCallback([FromForm] TwilioSmsCallbackRequest callback, CancellationToken cancellationToken)
+    public async Task<IActionResult> TwilioCallback([FromForm] TwilioSmsCallbackRequest callback, CancellationToken cancellationToken = default)
     {
         if (callback is null) return BadRequest();
 

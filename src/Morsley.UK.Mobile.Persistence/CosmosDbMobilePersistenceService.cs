@@ -18,7 +18,7 @@ public abstract class CosmosDbMobilePersistenceService
 
     protected ILogger Logger { get; }
 
-    public async Task<bool> DeleteByIdAsync(string id, CancellationToken cancellationToken = default)
+    public async Task<bool> DeleteByIdAsync(string id, CancellationToken cancellationToken)
     {
         try
         {
@@ -32,7 +32,10 @@ public abstract class CosmosDbMobilePersistenceService
             }
 
             var smsDocument = sms.ToDocument();
-            await _container.DeleteItemAsync<SmsDocument>(id, new PartitionKey(smsDocument.PartitionKey));
+            await _container.DeleteItemAsync<SmsDocument>(
+                id,
+                new PartitionKey(smsDocument.PartitionKey),
+                cancellationToken: cancellationToken);
 
             Logger.LogInformation("Successfully deleted SMS with ID: {SmsId}", id);
             return true;
@@ -54,7 +57,7 @@ public abstract class CosmosDbMobilePersistenceService
         }
     }
 
-    public async Task<SmsMessage?> GetByIdAsync(string id, CancellationToken cancellationToken = default)
+    public async Task<SmsMessage?> GetByIdAsync(string id, CancellationToken cancellationToken)
     {
         try
         {
@@ -67,7 +70,7 @@ public abstract class CosmosDbMobilePersistenceService
 
             while (query.HasMoreResults)
             {
-                var response = await query.ReadNextAsync();
+                var response = await query.ReadNextAsync(cancellationToken);
                 var smsDocument = response.FirstOrDefault();
                 if (smsDocument != null)
                 {
@@ -91,7 +94,7 @@ public abstract class CosmosDbMobilePersistenceService
         }
     }
 
-    public async Task<PaginatedResponse<SmsMessage>> GetPageAsync(PaginationRequest pagination, CancellationToken cancellationToken = default)
+    public async Task<PaginatedResponse<SmsMessage>> GetPageAsync(PaginationRequest pagination, CancellationToken cancellationToken)
     {
         try
         {
@@ -102,7 +105,7 @@ public abstract class CosmosDbMobilePersistenceService
             int totalCount = 0;
             while (countQuery.HasMoreResults)
             {
-                var countResponse = await countQuery.ReadNextAsync();
+                var countResponse = await countQuery.ReadNextAsync(cancellationToken);
                 totalCount = countResponse.FirstOrDefault();
                 break;
             }
@@ -122,7 +125,7 @@ public abstract class CosmosDbMobilePersistenceService
 
             while (query.HasMoreResults)
             {
-                var response = await query.ReadNextAsync();
+                var response = await query.ReadNextAsync(cancellationToken);
                 pageOfSmsDocuments.AddRange(response.ToList());
             }
 
@@ -156,7 +159,7 @@ public abstract class CosmosDbMobilePersistenceService
         }
     }
 
-    public async Task<string> SaveAsync(SmsMessage sms, CancellationToken cancellationToken = default)
+    public async Task<string> SaveAsync(SmsMessage sms, CancellationToken cancellationToken)
     {
         try
         {
@@ -164,7 +167,10 @@ public abstract class CosmosDbMobilePersistenceService
 
             var smsDocument = sms.ToDocument();
 
-            var response = await _container.UpsertItemAsync(smsDocument, new PartitionKey(smsDocument.PartitionKey));
+            var response = await _container.UpsertItemAsync(
+                smsDocument,
+                new PartitionKey(smsDocument.PartitionKey),
+                cancellationToken: cancellationToken);
 
             Logger.LogInformation("Successfully saved SMS with ID: {SmsId}. Request charge: {RequestCharge}", sms.Id, response.RequestCharge);
 
@@ -182,7 +188,7 @@ public abstract class CosmosDbMobilePersistenceService
         }
     }    
 
-    public async Task DeleteAllAsync(CancellationToken cancellationToken = default)
+    public async Task DeleteAllAsync(CancellationToken cancellationToken)
     {
         try
         {
